@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class Mapping extends Model
 {
 
+    protected $table = 'master_table_mappings';
+
     protected $fillable = [
         'confirmed',
         'input',

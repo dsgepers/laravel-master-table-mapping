@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('mappings', function (Blueprint $table) {
+        Schema::create('master_table_mappings', function (Blueprint $table) {
             $table->id();
             $table->string('input');
             $table->morphs('master_table');
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('mappings');
+        Schema::dropIfExists('master_table_mappings');
     }
 };

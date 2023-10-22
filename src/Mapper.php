@@ -5,13 +5,18 @@ namespace Schepeis\Mapping;
 
 use Atomescrochus\StringSimilarities\Compare;
 use Illuminate\Database\Eloquent\Model;
+use Schepeis\Mapping\CompareProviders\CompareProvider;
 use Schepeis\Mapping\Models\Mapping;
 use Schepeis\Mapping\Traits\Mappable;
 
 class Mapper
 {
-    private Compare $handler;
-    private string $method;
+    private CompareProvider $provider;
+
+    public function __construct(CompareProvider $provider)
+    {
+        $this->provider = $provider;
+    }
 
     public function map($type, $input): ?Model
     {
@@ -19,36 +24,25 @@ class Mapper
             return null;
         }
 
+
         if($exists = Mapping::where('master_table_type', $type)->where('input', $input)->first()) {
             return $exists->mappable;
         }
 
+        $response = $this->provider->map($type, $input);
 
-        $objects = app($type)->all();
 
-        $topScorer = collect($objects)->map(fn (Model $object) => [
-            'score' => call_user_func([$this->handler, $this->method], ...[$object->getAttribute($object->getMappableFieldName()), $input]),
-            'object' => $object,
-        ])->sortBy('score')->first() ?? null;
-
-        if (($topScorer['object'] ?? null)) {
-            $topScorer['object']->mappings()->save(tap(new Mapping(), function (Mapping $mapping) use ($input, $topScorer) {
-                $mapping->fill([
-                    'input' => $input,
-                    'confirmed' => false,
-                    'provider' => get_class($this->handler) . "::{$this->method}",
-                    'score' => $topScorer['score'] ?? null,
-                ]);
-            }));
-        }
-
-        return $topScorer['object'];
+        return $response;
     }
 
-    public function configure(string $class, string $method): self {
+    public function getProvider(): CompareProvider
+    {
+        return $this->provider;
+    }
 
-        $this->handler = app($class);
-        $this->method = $method;
+    public function setProvider(CompareProvider $provider): self
+    {
+        $this->provider = $provider;
         return $this;
     }
 }

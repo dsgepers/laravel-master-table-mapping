@@ -17,7 +17,10 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Schepeis\\Mapping\\Tests\\": "tests/"
+            "Schepeis\\Mapping\\Tests\\": "tests/",
+            "Workbench\\App\\": "workbench/app/",
+            "Workbench\\Database\\Factories\\": "workbench/database/factories/",
+            "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
         }
     },
     "require": {
@@ -27,6 +30,9 @@
         "illuminate/support": "^10.28"
     },
     "require-dev": {
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^7.8",
+        "orchestra/testbench": "^8.0",
         "phpunit/phpunit": "^10.4"
     },
     "minimum-stability": "dev",
@@ -40,11 +46,26 @@
         "laravel": {
             "providers": [
                 "Schepeis\\Mapping\\Providers\\MasterTableMappingServiceProvider"
-            ]
-        },
-        "aliases": {
-            "Mapper": "Schepeis\\Mapping\\Facades\\Mapper"
+            ],
+            "aliases": {
+              "Mapper": "Schepeis\\Mapping\\Facades\\Mapper"
+            }
         }
-
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@clear",
+            "@prepare"
+        ],
+        "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
+        "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "build": "@php vendor/bin/testbench workbench:build --ansi",
+        "serve": [
+            "@build",
+            "@php vendor/bin/testbench serve"
+        ],
+        "test": [
+            "@php vendor/bin/phpunit"
+        ]
     }
 }

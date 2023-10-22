@@ -7,12 +7,12 @@ use Schepeis\Mapping\Models\Mapping;
 
 trait Mappable
 {
-    public function getMappableFieldName() {
+    public function getMappableFieldName(): string {
         return 'name';
     }
 
     /**
-     * Get all of the post's comments.
+     * Get all of the objects mappings.
      */
     public function mappings(): MorphMany
     {
