@@ -12,8 +12,7 @@ class MasterTableMappingServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(Mapper::class, function($app) {
-            /* @var $mapper Mapper */
-            $mapper = $this->app->make(Mapper::class);
+            $mapper = new Mapper();
             $mapper->configure(...config('schepeis-mapping.providers.similarText.callable'));
             return $mapper;
         });

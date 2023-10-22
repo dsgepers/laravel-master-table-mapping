@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('mapping', function (Blueprint $table) {
+        Schema::create('mappings', function (Blueprint $table) {
             $table->id();
             $table->string('input');
             $table->morphs('master_table');
-            $table->boolean('confirmed');
+            $table->boolean('confirmed')->default(false);
+            $table->float('score')->nullable();
+            $table->string('provider')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('mapping');
+        Schema::dropIfExists('mappings');
     }
 };
